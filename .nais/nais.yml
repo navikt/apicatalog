@@ -1,0 +1,72 @@
+apiVersion: "nais.io/v1alpha1"
+kind: "Application"
+metadata:
+  name: apicatalog
+  namespace: nais
+  labels:
+    "team": nais
+spec:
+  image: {{ image }}
+  port: 3000
+  liveness:
+    path: "/api/isAlive"
+    initialDelay: 20
+    timeout: 60
+  readiness:
+    path: "/api/isAlive"
+    initialDelay: 20
+    timeout: 60
+  replicas:
+    min: 1
+    max: 2
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      memory: 128Mi
+  ingresses:
+    - https://apicatalog.dev.nav.no
+  filesFrom:
+    - configMap:
+        name: apicatalog-data
+        mountPath: /var/run/data
+  env:
+    - name: DATA
+      value: /var/run/data/products.json
+---
+kind: ConfigMap
+metadata:
+  name: apicatalog-data
+  namespace: nais
+data:
+  products.json: |
+    [
+        {
+            "id": "pensjon",
+            "name": "Pensjon",
+            "description": "Beskrivelse av eksterne API eksponert av PO-pensjon",
+            "apis": [
+                {
+                    "id": "vedtaksinformasjon",
+                    "name": "Vedtaksinformasjon",
+                    "description": "Tjenesten returnerer den samordningspliktige informasjonen om en brukers vedtak.",
+                    "openApiUrl": "https://navikt.github.io/pensjon-ekstern-api/api/afpprivat/AfpPrivat.html",
+                    "authentication": {
+                        "type": "maskinporten",
+                        "scopes": ["nav:pensjon/v1/vedtaksinformasjon"]
+                    },
+                    "endpoints": [
+                        {
+                            "url": "https://pensjon-gw.nav.no/pensjon/vedtaksinformasjon"
+                        }
+                    ],
+                    "openEndpoints": [
+                        {
+                            "url": "https://pensjon-gw.nav.no/pensjon/open"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]

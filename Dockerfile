@@ -3,6 +3,7 @@ FROM node:20-alpine as builder
 
 WORKDIR /app
 COPY . .
+RUN npm ci
 RUN npm run build
 
 FROM gcr.io/distroless/nodejs20-debian11:nonroot
