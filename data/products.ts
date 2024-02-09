@@ -1,3 +1,5 @@
+import { promises as fs } from "fs";
+
 export type Product = {
     id: string;
     name: string;
@@ -22,4 +24,16 @@ export type Endpoint = {
 export type Auth = {
     type: string;
     scopes: string[];
+}
+
+export const getProducts = async (): Promise<Product[]> => {
+  try {
+    const path = process.env.DATA || `${process.cwd()}/mock/products.json`;
+    const file = await fs.readFile(path, "utf8");
+    const products = JSON.parse(file) as Product[];
+    return products;
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
 }

@@ -1,0 +1,9 @@
+services:
+  apicatalog:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - DATA2=/data/products.json
+    volumes:
+      - ./data/products.json:/data/products.json

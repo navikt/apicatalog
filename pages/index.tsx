@@ -1,31 +1,32 @@
-import { Product } from "@/data/model";
+import { Product, getProducts } from "@/data/products";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
-import { promises as fs } from 'fs';
-import useSWR from 'swr';
+import useSWR from "swr";
 import { BodyLong, ExpansionCard, LinkPanel } from "@navikt/ds-react";
-import NextLink from 'next/link'; 
+import NextLink from "next/link";
 
 export const getServerSideProps = (async () => {
-  const file = await fs.readFile(process.cwd() + '/data/products.json', 'utf8');
-  const products = JSON.parse(file) as Product[];
-  return { props: { products } }
-}) satisfies GetServerSideProps<{ products: Product[] }>
+  return { props: { products: await getProducts() } };
+}) satisfies GetServerSideProps<{ products: Product[] }>;
 
-export default function Home({ products }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+export default function Home({
+  products,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
   /*const { data, error } = useSWR('/api/user', fetch);
 
   if (error) return <div>failed to load</div>;
   if (!data) return <div>loading...</div>;*/
   return (
     <main>
-      <h1>Products</h1>
-      {products.map((product, i) => {
-        return <ProductCard key={i} product={product} />
-      })}
+      {products.length === 0 ? (
+        <h1>No APIs found</h1>
+      ) : (
+        products.map((product, i) => {
+          return <ProductCard key={i} product={product} />;
+        })
+      )}
     </main>
   );
 }
-
 
 const ProductCard = ({ product }: { product: Product }) => {
   return (
@@ -37,7 +38,12 @@ const ProductCard = ({ product }: { product: Product }) => {
         <ExpansionCard.Content>
           <BodyLong spacing>{product.description}</BodyLong>
           {product.apis.map((api, i) => (
-            <LinkPanel href={ `${product.id}/apis/${api.id}`} key={i} border={false} as={NextLink}>
+            <LinkPanel
+              href={`${product.id}/apis/${api.id}`}
+              key={i}
+              border={false}
+              as={NextLink}
+            >
               <LinkPanel.Title>{api.name}</LinkPanel.Title>
               <LinkPanel.Description>{api.description}</LinkPanel.Description>
             </LinkPanel>

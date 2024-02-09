@@ -1,19 +1,15 @@
-import { Api, Product } from "@/data/model";
+import { Api, Product, getProducts } from "@/data/products";
 import { useRouter } from "next/router";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { promises as fs } from "fs";
 import { Box, List, Spacer, VStack } from "@navikt/ds-react";
 import { PadlockUnlockedIcon } from "@navikt/aksel-icons";
-import { ShieldLockIcon } from "@navikt/aksel-icons";
 import { PadlockLockedIcon } from "@navikt/aksel-icons";
-import { CogIcon } from "@navikt/aksel-icons";
 import Link from "next/link";
 import { ExternalLinkIcon } from "@navikt/aksel-icons";
 
 export const getServerSideProps = (async () => {
-  const file = await fs.readFile(process.cwd() + "/data/products.json", "utf8");
-  const products = JSON.parse(file) as Product[];
-  return { props: { products } };
+  return { props: { products: await getProducts() } };
 }) satisfies GetServerSideProps<{ products: Product[] }>;
 
 export default function Api({
@@ -66,7 +62,7 @@ export default function Api({
                 />
               }
             >
-              <Link href={api?.openApiUrl}>{api?.openApiUrl}</Link>
+              <Link href={api?.openApiUrl || '/notfound'}>{api?.openApiUrl}</Link>
             </List.Item>
           </List>
         </Box>
