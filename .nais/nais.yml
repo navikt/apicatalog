@@ -28,7 +28,7 @@ spec:
   ingresses:
     - https://apicatalog.dev.nav.no
   filesFrom:
-    - configMap: apicatalog-data
+    - configmap: apicatalog-data
       mountPath: /var/run/data
   env:
     - name: DATA
