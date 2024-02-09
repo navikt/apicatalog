@@ -1,0 +1,29 @@
+[
+    {
+        "id": "pensjon",
+        "name": "Pensjon",
+        "description": "Beskrivelse av eksterne API eksponert av PO-pensjon",
+        "apis": [
+            {
+                "id": "vedtaksinformasjon",
+                "name": "Vedtaksinformasjon",
+                "description": "Tjenesten returnerer den samordningspliktige informasjonen om en brukers vedtak.",
+                "openApiUrl": "https://navikt.github.io/pensjon-ekstern-api/api/afpprivat/AfpPrivat.html",
+                "authentication": {
+                    "type": "maskinporten",
+                    "scopes": ["nav:pensjon/v1/vedtaksinformasjon"]
+                },
+                "endpoints": [
+                    {
+                        "url": "https://pensjon-gw.nav.no/pensjon/vedtaksinformasjon"
+                    }
+                ],
+                "openEndpoints": [
+                    {
+                        "url": "https://pensjon-gw.nav.no/pensjon/open"
+                    }
+                ]
+            }
+        ]
+    }
+]
